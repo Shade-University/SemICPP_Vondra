@@ -6,9 +6,13 @@
 #else
 #define DLL_SPEC __declspec(dllimport)
 #endif
-
 #include <functional>
 #include <iostream>
+#include <windows.h>
+#include <stdio.h>
+
+
+
 
 
 
@@ -49,7 +53,6 @@ public:
 	static FieldObject* Field(std::string name, FieldType type);
 private:	
 	std::string databaseName;
-	Db(std::string database) { this->databaseName = databaseName; };
 };
 // --------------------------------------------------------
 

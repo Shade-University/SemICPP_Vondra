@@ -1,10 +1,14 @@
 #include "dbapi.h"
+#include <direct.h>
 
 // Otevøe databázi
 Db* Db::open(std::string database)
 {
-	std::cout << "Hello" << std::endl;
-	return nullptr;
+	std::string path = "databases/" + database;
+	CreateDirectory(path.c_str(), NULL);
+	Db* db = new Db();
+	db->databaseName = database;
+	return db;
 }
 
 // Vytvoøí novou tabulku
