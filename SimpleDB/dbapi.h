@@ -7,19 +7,17 @@
 #define DLL_SPEC __declspec(dllimport)
 #endif
 #include <functional>
-#include <iostream>
 #include <windows.h>
 #include <stdio.h>
+#include <string> 
+#include <iostream>
+#include <fstream>
 
 
-
-
-
-
-class DLL_SPEC Table;
-class DLL_SPEC FieldObject;
 class DLL_SPEC Object;
+class DLL_SPEC Table;
 class DLL_SPEC Db;
+
 // Typ datového pole
 enum struct FieldType {
 	Integer,
@@ -27,77 +25,6 @@ enum struct FieldType {
 	String,
 	Field
 };
-
-
-class DLL_SPEC Db {
-public:
-	// Otevøe databázi
-	static Db* open(std::string database);
-	// Uzavøe databázi (dealokuje pamìové prostøedky)
-	void close();
-
-	// Vytvoøí novou tabulku
-	Table* createTable(std::string name, int fieldsCount, FieldObject** fields);
-	// Otevøe existující tabulku
-	Table* openTable(std::string name);
-	// Otevøe tabulku (pokud neexistuje, vytvoøí automaticky novou)
-	Table* openOrCreateTable(std::string name, int fieldsCount, FieldObject** fields);
-
-	// Alokuje objekt „int“
-	static Object* Int(int value);
-	// Alokuje objekt „double“
-	static Object* Double(double value);
-	// Alokuje objekt „string“
-	static Object* String(std::string value);
-	// Alokuje objekt „field“
-	static FieldObject* Field(std::string name, FieldType type);
-private:	
-	std::string databaseName;
-};
-// --------------------------------------------------------
-
-// Rozhraní iterátoru (select)
-class DLL_SPEC Iterator {
-public:
-	virtual ~Iterator() {}
-
-	// Posun na další øádek (vrací true, pokud je iterátor platnı; logika podle Java Iterator)
-	virtual bool moveNext() = 0;
-	// Vrací pole Object* obsahující data øádku
-	virtual Object** getRow() = 0;
-	// Vrací interní rowId aktuálního øádku
-	virtual int getRowId() = 0;
-	// Uzavøe iterátor (dealokuje pamìové prostøedky)
-	virtual void close() = 0;
-};
-
-// Tabulka
-class DLL_SPEC Table {
-public:
-	// Vloení nového øádku do tabulky (pole Object* (pro jednotlivé hodnoty sloupeèkù))
-	void insert(Object** row);
-	// Smazání vyrabného øádku z tabulky
-	void remove(int rowid);
-
-	// Select – vytvoøí iterátor k procházení tabulky
-	Iterator* select();
-
-	// Commit – pøenese zmìny z pamìti do datovıch souborù
-	void commit();
-
-	// Uzavøe tabulku (dealokuje pamìové prostøedky)
-	void close();
-
-	// Vrací poèet øádkù v tabulce
-	int getRowCount() const;
-
-	// Vrací pole FieldObject* popisující sloupeèky tabulky
-	FieldObject** getFields() const;
-
-	// Vrací poèet sloupeèkù
-	int getFieldCount() const;
-};
-
 // Polymorfní datovı objekt (reprezentuje jednu datovou hodnotu v tabulce)
 // Rozhraní vyhovuje základním typùm int, double, string; pro typ „field“ je rozhraní rozšíøeno
 class DLL_SPEC Object {
@@ -165,6 +92,87 @@ public:
 private:
 	std::string name;
 	FieldType type;
+};
+
+class DLL_SPEC Db {
+public:
+	// Otevøe databázi
+	static Db* open(std::string database);
+	// Uzavøe databázi (dealokuje pamìové prostøedky)
+	void close();
+
+	// Vytvoøí novou tabulku
+	Table* createTable(std::string name, int fieldsCount, FieldObject** fields);
+	// Otevøe existující tabulku
+	Table* openTable(std::string name);
+	// Otevøe tabulku (pokud neexistuje, vytvoøí automaticky novou)
+	Table* openOrCreateTable(std::string name, int fieldsCount, FieldObject** fields);
+
+	// Alokuje objekt „int“
+	static Object* Int(int value) { return new IntObject(value); }
+	// Alokuje objekt „double“
+	static Object* Double(double value) { return new DoubleObject(value); }
+	// Alokuje objekt „string“
+	static Object* String(std::string value) { return new StringObject(value); }
+	// Alokuje objekt „field“
+	static FieldObject* Field(std::string name, FieldType type) { return new FieldObject(name, type); }
+private:	
+	std::string databaseName;
+	static std::string dbLocation;
+};
+// --------------------------------------------------------
+
+// Rozhraní iterátoru (select)
+class DLL_SPEC Iterator {
+public:
+	virtual ~Iterator() {}
+
+	// Posun na další øádek (vrací true, pokud je iterátor platnı; logika podle Java Iterator)
+	virtual bool moveNext() = 0;
+	// Vrací pole Object* obsahující data øádku
+	virtual Object** getRow() = 0;
+	// Vrací interní rowId aktuálního øádku
+	virtual int getRowId() = 0;
+	// Uzavøe iterátor (dealokuje pamìové prostøedky)
+	virtual void close() = 0;
+};
+
+// Tabulka
+class DLL_SPEC Table {
+public:
+	Table(FieldObject** tableFields, int tableFieldsCount)
+	{
+		this->tableFields = tableFields;
+		this->tableFieldsCount = tableFieldsCount;
+		this->rowCount = 0;
+	}
+	// Vloení nového øádku do tabulky (pole Object* (pro jednotlivé hodnoty sloupeèkù))
+	void insert(Object** row);
+	// Smazání vyrabného øádku z tabulky
+	void remove(int rowid);
+
+	// Select – vytvoøí iterátor k procházení tabulky
+	Iterator* select();
+
+	// Commit – pøenese zmìny z pamìti do datovıch souborù
+	void commit();
+
+	// Uzavøe tabulku (dealokuje pamìové prostøedky)
+	void close();
+
+	// Vrací poèet øádkù v tabulce
+	int getRowCount() const { return 0; }
+
+	// Vrací pole FieldObject* popisující sloupeèky tabulky
+	FieldObject** getFields() const { return tableFields; }
+
+	// Vrací poèet sloupeèkù
+	int getFieldCount() const { return tableFieldsCount; }
+private:
+	int rowCount;
+	int tableFieldsCount;
+	FieldObject** tableFields;
+	
 };
 #endif
 

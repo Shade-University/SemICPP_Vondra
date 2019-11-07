@@ -14,18 +14,3 @@ void Table::commit(){}
 
 // Uzavøe tabulku (dealokuje pamìové prostøedky)
 void Table::close(){}
-
-int Table::getRowCount() const
-{
-	return 0;
-}
-
-FieldObject** Table::getFields() const
-{
-	return nullptr;
-}
-
-int Table::getFieldCount() const
-{
-	return 0;
-}

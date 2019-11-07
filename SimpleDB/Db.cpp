@@ -1,10 +1,10 @@
 #include "dbapi.h"
-#include <direct.h>
 
+std::string Db::dbLocation = "databases/";
 // Otevøe databázi
 Db* Db::open(std::string database)
 {
-	std::string path = "databases/" + database;
+	std::string path = dbLocation + database;
 	CreateDirectory(path.c_str(), NULL);
 	Db* db = new Db();
 	db->databaseName = database;
@@ -14,7 +14,16 @@ Db* Db::open(std::string database)
 // Vytvoøí novou tabulku
 Table* Db::createTable(std::string name, int fieldsCount, FieldObject** fields)
 {
-	return nullptr;
+	//TODO Stejná tabulka ?
+	std::string file = dbLocation + databaseName + "/" + name + ".schema";
+	std::ofstream ofs(file, std::ifstream::trunc);
+
+	for (int i = 0; i < fieldsCount; i++)
+	{
+		ofs << fields[i]->getName() << ";" << std::to_string((int)fields[i]->getType()) << std::endl;
+	}
+
+	return new Table(fields, fieldsCount);
 }
 // Otevøe existující tabulku
 Table* Db::openTable(std::string name)

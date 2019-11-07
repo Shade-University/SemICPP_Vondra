@@ -8,10 +8,11 @@ int main() {
 	// Vytvoøení/otevøení db
 	Db* db = Db::open("testdb");
 	// Vytvoøení/otevøení tabulky
-	/*auto idField = Db::Field("id", FieldType::Integer);
+	auto idField = Db::Field("id", FieldType::Integer);
 	auto nameField = Db::Field("name", FieldType::String);
 	auto userFields = combineToDefinition(idField, nameField);
 	Table* users = db->openOrCreateTable("users", 2, userFields);
+	/*
 	// Vloení øádku do tabulky
 	auto id = Db::Int(15);
 	auto name = Db::String("Peter");
