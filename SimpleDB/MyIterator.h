@@ -3,8 +3,8 @@
 
 class MyIterator : public Iterator {
 public:
-	MyIterator(std::vector<Object**> data) { this->data = data; currentRow = 0; }
-	~MyIterator() { this->close(); }
+	MyIterator(std::vector<Object**> data) { this->data = data; currentRow = 0; } //Iterátor z vectoru, kterı v sobì má øádky objektù
+	~MyIterator() { this->close(); } //Pøi desktrutoru dealokuj pamì
 
 	// Posun na další øádek (vrací true, pokud je iterátor platnı; logika podle Java Iterator)
 	bool moveNext();

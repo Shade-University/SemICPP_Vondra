@@ -3,6 +3,7 @@
 #include "DbMenu.h"
 
 void showMainDialog(DbMenu* dbMenu);
+
 int main() {
 	Db* db = DbMenu::connectDbDialog();
 	DbMenu* dbMenu = new DbMenu(db);
@@ -12,7 +13,6 @@ int main() {
 	db->close();
 	std::cout << "Dekuji za vyzkouseni aplikace. Doufam, ze vse fungovalo jak melo. :)" << std::endl;
 	std::cin.get(); std::cin.get();
-
 }
 void showMainDialog(DbMenu* dbMenu)
 {

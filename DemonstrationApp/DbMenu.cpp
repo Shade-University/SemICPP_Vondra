@@ -35,7 +35,7 @@ void DbMenu::createTableDialog()
 	std::cin >> fieldCount;
 	std::cout << std::endl;
 
-	FieldObject** fields = new FieldObject * [fieldCount];
+	FieldObject** fields = new FieldObject *[fieldCount];
 	for (int i = 0; i < fieldCount; i++)
 	{
 		std::cout << "Sloupec " << i + 1 << std::endl;
@@ -53,7 +53,7 @@ void DbMenu::createTableDialog()
 		int choice;
 		std::cin >> choice;
 
-		FieldType fieldType;
+		FieldType fieldType{};
 		switch (choice)
 		{
 		case 1:

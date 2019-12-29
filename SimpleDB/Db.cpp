@@ -1,47 +1,45 @@
 #include "dbapi.h"
 
 std::string Db::dbLocation = "databases/";
-// Otevøe databázi
+
 Db* Db::open(std::string database)
 {
-	std::string path = dbLocation + database;
-	if (CreateDirectory(dbLocation.c_str(), NULL))
-		printf("Directory with databases created\n");
-	if (CreateDirectory(path.c_str(), NULL))
-		printf("Database created\n");
+	std::string path = dbLocation + database; // databases/userDb -> databáze pøedstavuje složku
+	CreateDirectory(dbLocation.c_str(), NULL);
+	CreateDirectory(path.c_str(), NULL); //Postupnì vytvoø složky pokud neexistují
+
 
 	Db* db = new Db();
 	db->databaseName = database;
-	return db;
+	return db; //Vytvoø Db a nastav její jméno
 }
 
 // Vytvoøí novou tabulku
 Table* Db::createTable(std::string name, int fieldsCount, FieldObject** fields)
 {
-	std::string file = dbLocation + databaseName + "/" + name + ".schema";
+	std::string file = dbLocation + databaseName + "/" + name + ".schema"; // databases/userDb/users.schema -> users.schema pøedstavuje tabulku
 	std::ofstream ofs(file, std::ifstream::trunc);
 
 	ofs << fieldsCount << std::endl;
 	for (int i = 0; i < fieldsCount; i++)
 	{
 		ofs << fields[i]->getName() << ";" << std::to_string((int)fields[i]->getType()) << std::endl;
-	}
+	} //Pøi vytvoøení zapiš pouze hlavièku a poèet sloupcù
 
 	return new Table(fields, fieldsCount, file);
 }
 // Otevøe existující tabulku
 Table* Db::openTable(std::string name)
 {
-	int fieldsCount = 0;
+	int fieldsCount;
 	std::string file = dbLocation + databaseName + "/" + name + ".schema";
 	std::ifstream ifile(file);
-	ifile >> fieldsCount;
 
-
-
-	FieldObject** fields = new FieldObject * [fieldsCount];
 	std::string line;
-	std::getline(ifile, line);
+	std::getline(ifile, line); //Naèti poèet sloupcù
+	fieldsCount = std::stoi(line);
+
+	FieldObject** fields = new FieldObject *[fieldsCount];
 	for (int i = 0; i < fieldsCount; i++)
 	{
 		std::getline(ifile, line);
@@ -49,10 +47,12 @@ Table* Db::openTable(std::string name)
 		std::string fieldName = line.substr(0, separatorPosition);
 		int fieldType = std::stoi(line.substr(separatorPosition + 1, line.length()));
 		FieldType type = static_cast<FieldType>(fieldType);
+		//Naèti øádek a rozparsuj
+		//Struktura hlavièky v souboru je: nazev;typ [pomocí enum èísla]
 
-		FieldObject* fieldObject = new FieldObject(fieldName, type);
+		FieldObject* fieldObject = Db::Field(fieldName, type);
 		fields[i] = fieldObject;
-	}
+	} //Naèti hlavièku
 
 	std::vector<Object**> data;
 	std::vector<std::string> tokens;
@@ -63,9 +63,10 @@ Table* Db::openTable(std::string name)
 
 		while (std::getline(s, word, ';')) {
 			tokens.push_back(word);
-		}
+		} //Pøeveï øádek na stream ten rozparsuj podle separátoru ;
+		//Získáme hodnoty ve sloupcích
 
-		Object** row = new Object * [fieldsCount];
+		Object** row = new Object *[fieldsCount];
 		for (int j = 0; j < fieldsCount; j++)
 		{
 			switch (fields[j]->getType())
@@ -74,20 +75,20 @@ Table* Db::openTable(std::string name)
 			case FieldType::Integer: row[j] = Db::Int(std::stoi(tokens[j])); break;
 			case FieldType::Double: row[j] = Db::Double(std::stod(tokens[j])); break;
 			}
-		}
-		data.push_back(row);
+		} //Podle typu hodnot, který známe z hlavièky vytvoø objekty
+		data.push_back(row); //Øádky uchovávám ve vectoru (nepotøebuji znát jejich velikost)
 	}
 
 	return new Table(fields, fieldsCount, file, data);
 }
-// Otevøe tabulku (pokud neexistuje, vytvoøí automaticky novou)
+
 Table* Db::openOrCreateTable(std::string name, int fieldsCount, FieldObject** fields)
 {
 	Table* table;
 	std::string path = dbLocation + databaseName + "/" + name + ".schema";
 	std::ifstream ifile(path);
 
-	if (ifile.fail())
+	if (ifile.fail()) //Zjistí, jestli soubor [tabulka] již existuje a podle toho se zavolá pøíslušná metoda
 	{
 		table = this->createTable(name, fieldsCount, fields);
 	}

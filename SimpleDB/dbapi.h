@@ -6,6 +6,7 @@
 #else
 #define DLL_SPEC __declspec(dllimport)
 #endif
+
 #include <functional>
 #include <windows.h>
 #include <stdio.h>
@@ -125,8 +126,8 @@ public:
 	// Alokuje objekt „field“
 	static FieldObject* Field(std::string name, FieldType type) { return new FieldObject(name, type); }
 private:	
-	std::string databaseName;
-	static std::string dbLocation;
+	std::string databaseName; //Db si uchovává svoje jméno
+	static std::string dbLocation; //Cesta k databázím staticky daná -> databases/
 };
 // --------------------------------------------------------
 
@@ -153,13 +154,15 @@ public:
 		this->tableFieldsCount = tableFieldsCount;
 		this->rowCount = 0;
 		this->tableFilePath = tableFilePath;
-	}
+	} //Konstruktor pro vytvoøení prázdné tabulky
+
 	Table(FieldObject** tableFields, int tableFieldsCount, std::string tableFilePath, std::vector<Object**> data)
 		: Table(tableFields, tableFieldsCount, tableFilePath)
 	{
 		this->data = data;
 		this->rowCount = data.size();
-	}
+	} //Konstruktor pro naètení dat tabulky
+
 	// Vložení nového øádku do tabulky (pole Object* (pro jednotlivé hodnoty sloupeèkù))
 	void insert(Object** row);
 	// Smazání vyrabného øádku z tabulky
@@ -186,8 +189,8 @@ private:
 	int rowCount;
 	int tableFieldsCount;
 	FieldObject** tableFields;
-	std::string tableFilePath;
-	std::vector<Object**> data;
+	std::string tableFilePath; //Cesta k souboru pro commit
+	std::vector<Object**> data; //Vector øádkù
 };
 #endif
 

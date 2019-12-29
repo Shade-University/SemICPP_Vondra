@@ -53,7 +53,7 @@ void TableMenu::insertToTableDialog()
 	std::cout << "======================" << std::endl;
 	std::cout << std::endl;
 
-	Object** rowsValues = new Object * [table->getFieldCount()];
+	Object** rowsValues = new Object *[table->getFieldCount()];
 	for (int i = 0; i < table->getFieldCount(); i++)
 	{
 		FieldObject* field = table->getFields()[i];

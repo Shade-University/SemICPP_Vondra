@@ -1,29 +1,26 @@
 #include "dbapi.h"
 #include "MyIterator.h"
 
-// Vložení nového øádku do tabulky (pole Object* (pro jednotlivé hodnoty sloupeèkù))
 void Table::insert(Object** row)
 {
 	data.push_back(row);
 	rowCount++;
-}
-// Smazání vyrabného øádku z tabulky
+} //Insert do vectoru
+
 void Table::remove(int rowid)
 {
 	data.erase(data.begin() + rowid);
 	rowCount--;
-}
+} //Vymazání z vektoru
 
-// Select – vytvoøí iterátor k procházení tabulky
 Iterator* Table::select()
 { 
 	return new MyIterator(data); 
-}
+} //Vrácení vlastního iterátoru
 
-// Commit – pøenese zmìny z pamìti do datových souborù
 void Table::commit()
 {
-	std::ofstream ofs(tableFilePath, std::ifstream::trunc);
+	std::ofstream ofs(tableFilePath, std::ifstream::trunc); //trunc pøemaže minulý soubor
 
 	ofs << tableFieldsCount << std::endl;
 	for (int i = 0; i < tableFieldsCount; i++)
@@ -43,13 +40,12 @@ void Table::commit()
 			}
 		}
 		ofs << std::endl;
-	} //Zapiš data
+	} //Zapiš data podle typu typu sloupce
 	ofs.close();
 }
 
-// Uzavøe tabulku (dealokuje pamìové prostøedky)
 void Table::close()
 {
 	data.clear();
 	data.shrink_to_fit();
-}
+} //Vyèisti pamì vectoru

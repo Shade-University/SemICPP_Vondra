@@ -1,4 +1,6 @@
 /*
+//Example ze zadání
+
 #include "dbapi.h"
 #include "helpful.h"
 #include <iostream>

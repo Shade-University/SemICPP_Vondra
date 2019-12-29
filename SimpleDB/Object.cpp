@@ -6,16 +6,12 @@ Object::Object()
 Object::~Object()
 {}
 
-// Gettery a settery podle typu
-// Jejich funkce je definována jen v pøípadì, e aktuální objekt je odpovídajícího typu
-// Automatické konverze v základním API nejsou vyadovány
-
 std::string Object::getString() const
 {
-	if (dynamic_cast<const StringObject*>(this) == nullptr)
+	if (dynamic_cast<const StringObject*>(this) == nullptr) //Pøetypuj na String objekt. Pokud se nepovede, vyhoï exception
 		throw std::runtime_error("Bad object type for method getString");
 
-	StringObject* stringObject = (StringObject*)this;
+	StringObject* stringObject = (StringObject*)this; //TODO mohl jsem pøetypovat u v dynamic_castu
 	return stringObject->getValue();
 }
 void Object::setString(std::string value)
@@ -67,7 +63,7 @@ bool Object::isType(FieldType type) const
 	switch (type)
 	{
 	case FieldType::String:
-		return dynamic_cast<const StringObject*>(this) != nullptr;
+		return dynamic_cast<const StringObject*>(this) != nullptr; //Pokud se povede pøetypovat na danı objekt, vra true
 		break;
 	case FieldType::Integer:
 		return dynamic_cast<const IntObject*>(this) != nullptr;
