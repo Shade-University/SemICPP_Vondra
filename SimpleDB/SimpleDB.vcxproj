@@ -129,10 +129,11 @@
   <ItemGroup>
     <ClInclude Include="dbapi.h" />
     <ClInclude Include="helpful.h" />
+    <ClInclude Include="MyIterator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Db.cpp" />
-    <ClCompile Include="Iterator.cpp" />
+    <ClCompile Include="MyIterator.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Table.cpp" />
   </ItemGroup>

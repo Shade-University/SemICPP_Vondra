@@ -12,6 +12,8 @@
 #include <string> 
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <sstream>
 
 
 class DLL_SPEC Object;
@@ -54,6 +56,8 @@ class DLL_SPEC IntObject : public Object {
 public:
 	IntObject() : value(0) {}
 	IntObject(int v) : value(v) {}
+	int getValue() const { return value; }
+	void setValue(int value) { this->value = value; }
 private:
 	int value;
 };
@@ -62,6 +66,8 @@ class DLL_SPEC DoubleObject : public Object {
 public:
 	DoubleObject() : value(0.0) {}
 	DoubleObject(double v) : value(v) {}
+	double getValue() const { return value; }
+	void setValue(double value) { this->value = value; }
 private:
 	double value;
 };
@@ -70,6 +76,8 @@ class DLL_SPEC StringObject : public Object {
 public:
 	StringObject() : value("") {}
 	StringObject(std::string v) : value(v) {}
+	std::string getValue() const { return value; }
+	void setValue(std::string value) { this->value = value; }
 private:
 	std::string value;
 };
@@ -82,7 +90,7 @@ public:
 
 	virtual bool isType(FieldType type) const override
 	{
-		return false;
+		return type == this->type;
 	}
 
 	// Název sloupeèku
@@ -99,7 +107,7 @@ public:
 	// Otevøe databázi
 	static Db* open(std::string database);
 	// Uzavøe databázi (dealokuje pamìové prostøedky)
-	void close();
+	void close() {};
 
 	// Vytvoøí novou tabulku
 	Table* createTable(std::string name, int fieldsCount, FieldObject** fields);
@@ -126,7 +134,6 @@ private:
 class DLL_SPEC Iterator {
 public:
 	virtual ~Iterator() {}
-
 	// Posun na další øádek (vrací true, pokud je iterátor platný; logika podle Java Iterator)
 	virtual bool moveNext() = 0;
 	// Vrací pole Object* obsahující data øádku
@@ -140,11 +147,18 @@ public:
 // Tabulka
 class DLL_SPEC Table {
 public:
-	Table(FieldObject** tableFields, int tableFieldsCount)
+	Table(FieldObject** tableFields, int tableFieldsCount, std::string tableFilePath)
 	{
 		this->tableFields = tableFields;
 		this->tableFieldsCount = tableFieldsCount;
 		this->rowCount = 0;
+		this->tableFilePath = tableFilePath;
+	}
+	Table(FieldObject** tableFields, int tableFieldsCount, std::string tableFilePath, std::vector<Object**> data)
+		: Table(tableFields, tableFieldsCount, tableFilePath)
+	{
+		this->data = data;
+		this->rowCount = data.size();
 	}
 	// Vložení nového øádku do tabulky (pole Object* (pro jednotlivé hodnoty sloupeèkù))
 	void insert(Object** row);
@@ -161,7 +175,7 @@ public:
 	void close();
 
 	// Vrací poèet øádkù v tabulce
-	int getRowCount() const { return 0; }
+	int getRowCount() const { return rowCount; }
 
 	// Vrací pole FieldObject* popisující sloupeèky tabulky
 	FieldObject** getFields() const { return tableFields; }
@@ -172,7 +186,8 @@ private:
 	int rowCount;
 	int tableFieldsCount;
 	FieldObject** tableFields;
-	
+	std::string tableFilePath;
+	std::vector<Object**> data;
 };
 #endif
 

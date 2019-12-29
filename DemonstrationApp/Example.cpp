@@ -1,3 +1,4 @@
+/*
 #include "dbapi.h"
 #include "helpful.h"
 #include <iostream>
@@ -12,13 +13,14 @@ int main() {
 	auto nameField = Db::Field("name", FieldType::String);
 	auto userFields = combineToDefinition(idField, nameField);
 	Table* users = db->openOrCreateTable("users", 2, userFields);
-	/*
+	
 	// Vložení øádku do tabulky
 	auto id = Db::Int(15);
 	auto name = Db::String("Peter");
 	auto row = combineToRow(id, name);
 	users->insert(row);
-	// Select
+
+	//Select
 	auto it = users->select();
 	while (it->moveNext())
 	{
@@ -26,13 +28,15 @@ int main() {
 		cout << row[0]->getInt() << ": " << row[1]->getString() << endl;
 	}
 	it->close();
+	
 	// Uložení tabulky na disk
 	users->commit();
 	// Uzavøení tabulky (a dealokace pamìových prostøedkù)
 	users->close();
 	// Uzavøení db (a dealokace pamìových prostøedkù)
-	db->close();*/
+	db->close();
+
 
 	std::cin.get();
 	return 0;
-}
+} */
