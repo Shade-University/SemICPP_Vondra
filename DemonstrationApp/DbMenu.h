@@ -24,8 +24,10 @@ public:
 	//Dialog pro otevøení tabulky. Otevøe dialog s menu pro danou tabulku
 	void openTableDialog();
 
+	//Dialog pro propojení tabulek do relace
 	void createMenuConnectTablesDialog();
 
+	//Zobrazí propojené tabulky
 	void showConnectedTables();
 
 

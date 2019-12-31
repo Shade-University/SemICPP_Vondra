@@ -27,14 +27,14 @@ void RelationTable::show()
 				std::cout << row[i]->getDouble();
 
 			std::cout << "|";
-
-			if (foreignKeyColumnNumber - 1 == i)
+			//Z hlavní tabulky vypíše vše
+			if (foreignKeyColumnNumber - 1 == i) //Pokud se jedná o sloupec v relaci
 			{
 				Iterator* iterTarget = secondTable->select();
 				while (iterTarget->moveNext())
 				{
 					Object** row2 = iterTarget->getRow();
-					if (row[i]->getInt() == row2[targetColumnNumber - 1]->getInt())
+					if (row[i]->getInt() == row2[targetColumnNumber - 1]->getInt()) //Zjisti, jestli daný sloupec patøí k hlavní tabulce.
 					{
 						for (int j = 0; j < secondTable->getFieldCount(); j++)
 						{
@@ -46,7 +46,7 @@ void RelationTable::show()
 								std::cout << row2[j]->getDouble();
 							std::cout << "|";
 						}
-					}
+					} //Vypiš sloupec z cílené tabulky
 				}
 			}
 		}
