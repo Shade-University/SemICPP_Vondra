@@ -125,9 +125,12 @@ public:
 	static Object* String(std::string value) { return new StringObject(value); }
 	// Alokuje objekt „field“
 	static FieldObject* Field(std::string name, FieldType type) { return new FieldObject(name, type); }
+
+	static const std::string dbLocation; //Cesta k databázím staticky daná -> databases/
+	std::string getDatabaseName() { return this->databaseName; }
 private:	
 	std::string databaseName; //Db si uchovává svoje jméno
-	static std::string dbLocation; //Cesta k databázím staticky daná -> databases/
+
 };
 // --------------------------------------------------------
 

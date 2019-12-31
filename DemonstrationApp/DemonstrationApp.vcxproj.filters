@@ -27,12 +27,18 @@
     <ClCompile Include="TableMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RelationTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DbMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TableMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RelationTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

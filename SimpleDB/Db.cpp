@@ -1,6 +1,6 @@
 #include "dbapi.h"
 
-std::string Db::dbLocation = "databases/";
+const std::string Db::dbLocation = "databases/";
 
 Db* Db::open(std::string database)
 {
@@ -59,6 +59,7 @@ Table* Db::openTable(std::string name)
 	std::string word;
 	while (std::getline(ifile, line))
 	{
+		tokens.clear();
 		std::stringstream s(line);
 
 		while (std::getline(s, word, ';')) {

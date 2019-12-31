@@ -1,5 +1,9 @@
 3
 id;0
 name;2
-lastname;2
-1;Karel;Machal;
+id_subject;0
+1;Tomas;2;
+2;Karel;1;
+3;Honza;1;
+4;Marek;3;
+5;Veronika;5;
