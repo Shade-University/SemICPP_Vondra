@@ -10,8 +10,21 @@ Db* Db::open(std::string database)
 
 
 	Db* db = new Db();
+	db->tablesCount = 0;
 	db->databaseName = database;
 	return db; //Vytvoø Db a nastav její jméno
+}
+
+void Db::close()
+{
+	for (int i = 0; i < tablesCount; i++)
+	{
+		delete tables[i];
+	}
+
+	tables.clear();
+	tables.shrink_to_fit();
+	delete this;
 }
 
 // Vytvoøí novou tabulku
@@ -26,7 +39,11 @@ Table* Db::createTable(std::string name, int fieldsCount, FieldObject** fields)
 		ofs << fields[i]->getName() << ";" << std::to_string((int)fields[i]->getType()) << std::endl;
 	} //Pøi vytvoøení zapiš pouze hlavièku a poèet sloupcù
 
-	return new Table(fields, fieldsCount, file);
+	Table* table = new Table(fields, fieldsCount, file, name);
+	tables.push_back(table);
+	tablesCount++;
+
+	return table;
 }
 // Otevøe existující tabulku
 Table* Db::openTable(std::string name)
@@ -43,9 +60,11 @@ Table* Db::openTable(std::string name)
 	for (int i = 0; i < fieldsCount; i++)
 	{
 		std::getline(ifile, line);
+
 		int separatorPosition = line.find(';');
 		std::string fieldName = line.substr(0, separatorPosition);
 		int fieldType = std::stoi(line.substr(separatorPosition + 1, line.length()));
+
 		FieldType type = static_cast<FieldType>(fieldType);
 		//Naèti øádek a rozparsuj
 		//Struktura hlavièky v souboru je: nazev;typ [pomocí enum èísla]
@@ -60,8 +79,8 @@ Table* Db::openTable(std::string name)
 	while (std::getline(ifile, line))
 	{
 		tokens.clear();
-		std::stringstream s(line);
 
+		std::stringstream s(line);
 		while (std::getline(s, word, ';')) {
 			tokens.push_back(word);
 		} //Pøeveï øádek na stream ten rozparsuj podle separátoru ;
@@ -80,7 +99,11 @@ Table* Db::openTable(std::string name)
 		data.push_back(row); //Øádky uchovávám ve vectoru (nepotøebuji znát jejich velikost)
 	}
 
-	return new Table(fields, fieldsCount, file, data);
+	Table* table = new Table(fields, fieldsCount, file, name, data);
+	tables.push_back(table);
+	tablesCount++;
+
+	return table;
 }
 
 Table* Db::openOrCreateTable(std::string name, int fieldsCount, FieldObject** fields)

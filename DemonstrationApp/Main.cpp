@@ -2,12 +2,12 @@
 #include "helpful.h"
 #include "DbMenu.h"
 
-void showMainDialog(DbMenu* dbMenu);
+void showMainDialog(DbMenu dbMenu);
 void showReadme();
 
 int main() {
 	Db* db = DbMenu::connectDbDialog();
-	DbMenu* dbMenu = new DbMenu(db);
+	DbMenu dbMenu(db);
 	showMainDialog(dbMenu);
 	
 	//end
@@ -15,7 +15,7 @@ int main() {
 	std::cout << "Dekuji za vyzkouseni aplikace. Doufam, ze vse fungovalo jak melo. :)" << std::endl;
 	std::cin.get(); std::cin.get();
 }
-void showMainDialog(DbMenu* dbMenu)
+void showMainDialog(DbMenu dbMenu)
 {
 	bool repeat = true;
 
@@ -45,16 +45,16 @@ void showMainDialog(DbMenu* dbMenu)
 		switch (choice)
 		{
 		case 1:
-			dbMenu->createTableDialog();
+			dbMenu.createTableDialog();
 			break;
 		case 2:
-			dbMenu->openTableDialog();
+			dbMenu.openTableDialog();
 			break;
 		case 3:
-			dbMenu->createMenuConnectTablesDialog();
+			dbMenu.createMenuConnectTablesDialog();
 			break;
 		case 4:
-			dbMenu->showConnectedTables();
+			dbMenu.showConnectedTables();
 			break;
 		case 5:
 			repeat = false;

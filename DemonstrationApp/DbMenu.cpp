@@ -34,7 +34,7 @@ Table* DbMenu::createTableDialog()
 	std::cin >> fieldCount;
 	std::cout << std::endl;
 
-	FieldObject** fields = new FieldObject * [fieldCount];
+	FieldObject** fields = new FieldObject *[fieldCount];
 	for (int i = 0; i < fieldCount; i++)
 	{
 		std::cout << "Sloupec " << i + 1 << std::endl;
@@ -80,14 +80,20 @@ void DbMenu::openTableDialog()
 	std::cout << "===========================" << std::endl;
 	std::cout << std::endl;
 
-	std::cout << "Zadejte nazev tabulky: ";
+	std::vector<Table*> loadedTables = loadTables(db);
+	for (int i = 0; i < loadedTables.size(); i++)
+	{
+		std::cout << loadedTables[i]->getTableName() << std::endl;
+	} //Zobraz tabulky
+
+	std::cout << std::endl << "Zadejte nazev tabulky: ";
 	std::string tableName;
 	std::cin >> tableName;
 
 	Table* table = db->openTable(tableName);
-	TableMenu* tableMenu = new TableMenu(table);
+	TableMenu tableMenu(table);
 
-	tableMenu->showTableMenuDialog();
+	tableMenu.showTableMenuDialog();
 }
 
 void DbMenu::createMenuConnectTablesDialog()
@@ -146,6 +152,7 @@ void DbMenu::showTableColumns(Table* table)
 		}
 		std::cout << std::endl;
 	}
+	iter->close();
 }
 
 RelationTable* DbMenu::loadRelationTable(std::vector<Table*> tables)
@@ -162,7 +169,7 @@ RelationTable* DbMenu::loadRelationTable(std::vector<Table*> tables)
 	int foreigKeyColumn;
 	std::cin >> foreigKeyColumn;
 
-	std::cout << std::endl << "Zadejte druhou tabulku kterou chcete propojit relací: ";
+	std::cout << std::endl << "Zadejte druhou tabulku kterou chcete propojit relaci: ";
 	int table2Column;
 	std::cin >> table2Column;
 	table2 = tables.at(table2Column - 1);

@@ -17,6 +17,14 @@ public:
 	static Db* connectDbDialog();
 	
 	DbMenu(Db* db) { this->db = db; }
+	~DbMenu() {
+		for (int i = 0; i < relationTables.size(); i++)
+		{
+			delete relationTables[i];
+		}
+		relationTables.clear();
+		relationTables.shrink_to_fit();
+	}
 
 	//Dialog pro vytvoøení tabulky
 	Table* createTableDialog();

@@ -131,6 +131,7 @@ void TableMenu::showTableDialog()
 		}
 		std::cout << std::endl;
 	}
+	iter->close();
 
 	system("pause");
 }

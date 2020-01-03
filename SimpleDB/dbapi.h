@@ -86,7 +86,7 @@ private:
 // Objekt popisující sloupeèek „field“
 class DLL_SPEC FieldObject : public Object {
 public:
-	FieldObject() {}
+	FieldObject() { name = ""; type = FieldType::Field; }
 	FieldObject(std::string name, FieldType type) :name(name), type(type) {}
 
 	virtual bool isType(FieldType type) const override
@@ -108,7 +108,7 @@ public:
 	// Otevøe databázi
 	static Db* open(std::string database);
 	// Uzavøe databázi (dealokuje pamìové prostøedky)
-	void close() {};
+	void close();
 
 	// Vytvoøí novou tabulku
 	Table* createTable(std::string name, int fieldsCount, FieldObject** fields);
@@ -127,9 +127,12 @@ public:
 	static FieldObject* Field(std::string name, FieldType type) { return new FieldObject(name, type); }
 
 	static const std::string dbLocation; //Cesta k databázím staticky daná -> databases/
-	std::string getDatabaseName() { return this->databaseName; }
+	std::string getDatabaseName() const { return this->databaseName; }
+	const std::vector<Table*> getTables() const { return tables; }
 private:	
 	std::string databaseName; //Db si uchovává svoje jméno
+	std::vector<Table*> tables; //Ukladám si tabulky pro jejich dealokaci pøes close
+	int tablesCount = 0;
 
 };
 // --------------------------------------------------------
@@ -151,16 +154,17 @@ public:
 // Tabulka
 class DLL_SPEC Table {
 public:
-	Table(FieldObject** tableFields, int tableFieldsCount, std::string tableFilePath)
+	Table(FieldObject** tableFields, int tableFieldsCount, std::string tableFilePath, std::string tableName)
 	{
 		this->tableFields = tableFields;
 		this->tableFieldsCount = tableFieldsCount;
 		this->rowCount = 0;
 		this->tableFilePath = tableFilePath;
+		this->tableName = tableName;
 	} //Konstruktor pro vytvoøení prázdné tabulky
 
-	Table(FieldObject** tableFields, int tableFieldsCount, std::string tableFilePath, std::vector<Object**> data)
-		: Table(tableFields, tableFieldsCount, tableFilePath)
+	Table(FieldObject** tableFields, int tableFieldsCount, std::string tableFilePath, std::string tableName, std::vector<Object**> data)
+		: Table(tableFields, tableFieldsCount, tableFilePath, tableName)
 	{
 		this->data = data;
 		this->rowCount = data.size();
@@ -188,11 +192,14 @@ public:
 
 	// Vrací poèet sloupeèkù
 	int getFieldCount() const { return tableFieldsCount; }
+
+	std::string getTableName() const { return tableName; }
 private:
 	int rowCount;
 	int tableFieldsCount;
 	FieldObject** tableFields;
 	std::string tableFilePath; //Cesta k souboru pro commit
+	std::string tableName;
 	std::vector<Object**> data; //Vector øádkù
 };
 #endif

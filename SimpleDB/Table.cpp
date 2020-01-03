@@ -9,7 +9,15 @@ void Table::insert(Object** row)
 
 void Table::remove(int rowid)
 {
-	data.erase(data.begin() + rowid);
+	Object** row = data.at(rowid);
+	data.erase(data.begin() + rowid); //Odstranìní z vectoru
+
+	for (int i = 0; i < tableFieldsCount; i++)
+	{
+		delete row[i];
+	}
+	delete[] row; //dealokace
+
 	rowCount--;
 } //Vymazání z vektoru
 
@@ -46,6 +54,14 @@ void Table::commit()
 
 void Table::close()
 {
+	for (int i = 0; i < data.size(); ++i) {
+		for (int j = 0; j < tableFieldsCount; j++)
+		{
+			delete data[i][j];
+		} //Dealokuj objekty v øádcích
+		delete[] data[i]; //dealokuj øádky
+	}
+
 	data.clear();
 	data.shrink_to_fit();
 } //Vyèisti pamì vectoru

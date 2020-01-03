@@ -18,5 +18,5 @@ int MyIterator::getRowId() {
 
 void MyIterator::close() {
 	data.clear();
-	data.shrink_to_fit();
+	data.shrink_to_fit(); //vector je pøedán jako hodnota (kopie), tudíž staèí smazat tento nový vector.
 }
